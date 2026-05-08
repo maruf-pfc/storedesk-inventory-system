@@ -9,4 +9,6 @@ public class Item
     public int Quantity { get; set; }
     public int CategoryId { get; set; }
     public Category? Category { get; set; }
+    public ICollection<Transaction> Transactions
+    { get; set; } = new List<Transaction>();
 }

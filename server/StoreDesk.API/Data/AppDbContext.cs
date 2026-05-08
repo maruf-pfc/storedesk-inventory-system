@@ -11,4 +11,5 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
 
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<Item> Items => Set<Item>();
+    public DbSet<Transaction> Transactions => Set<Transaction>();
 }
