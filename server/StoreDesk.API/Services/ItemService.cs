@@ -17,7 +17,8 @@ public class ItemService : IItemService
 
     public async Task<IEnumerable<ItemResponseDto>> GetAllAsync(
         string? search,
-        int? categoryId)
+        int? categoryId,
+        PaginationDto pagination)
     {
         var query = _context.Items
             .Include(item => item.Category)
@@ -34,6 +35,10 @@ public class ItemService : IItemService
             query = query.Where(item =>
                 item.CategoryId == categoryId.Value);
         }
+
+        query = query
+            .Skip((pagination.Page - 1) * pagination.PageSize)
+            .Take(pagination.PageSize);
 
         var items = await query
             .Select(item => new ItemResponseDto

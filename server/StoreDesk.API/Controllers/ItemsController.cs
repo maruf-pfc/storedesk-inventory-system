@@ -18,11 +18,13 @@ public class ItemsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ItemResponseDto>>> GetItems(
         [FromQuery] string? search,
-        [FromQuery] int? categoryId)
+        [FromQuery] int? categoryId,
+        [FromQuery] PaginationDto pagination)
     {
         var items = await _itemService.GetAllAsync(
             search,
-            categoryId);
+            categoryId,
+            pagination);
 
         return Ok(items);
     }

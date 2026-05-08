@@ -57,3 +57,11 @@ Content-Type: application/json
   "quantity": 10,
   "categoryId": 3
 }
+
+###
+GET {{StoreDesk.API_HostAddress}}/api/items?page=1&pageSize=5
+Accept: application/json
+
+###
+GET {{StoreDesk.API_HostAddress}}/api/items?page=2&pageSize=5
+Accept: application/json

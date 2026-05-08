@@ -6,7 +6,8 @@ public interface IItemService
 {
     Task<IEnumerable<ItemResponseDto>> GetAllAsync(
         string? search,
-        int? categoryId);
+        int? categoryId,
+        PaginationDto pagination);
 
     Task<ItemResponseDto?> GetByIdAsync(int id);
 
