@@ -1,5 +1,6 @@
-namespace StoreDesk.API.DTOs;
 using System.ComponentModel.DataAnnotations;
+
+namespace StoreDesk.API.DTOs;
 
 public class CreateCategoryDto
 {
