@@ -11,3 +11,21 @@ Content-Type: application/json
   "name": "Electronics",
   "description": "Electronic products"
 }
+
+###
+GET {{StoreDesk.API_HostAddress}}/api/categories/1
+Accept: application/json
+
+###
+PUT {{StoreDesk.API_HostAddress}}/api/categories/2
+Content-Type: application/json
+
+{
+  "id": 2,
+  "name": "Updated Electronics",
+  "description": "Updated description for electronic products"
+}
+
+###
+DELETE {{StoreDesk.API_HostAddress}}/api/categories/2
+Content-Type: application/json

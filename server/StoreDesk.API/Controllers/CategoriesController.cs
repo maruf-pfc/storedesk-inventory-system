@@ -58,4 +58,72 @@ public class CategoriesController : ControllerBase
             new { id = category.Id },
             response);
     }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<CategoryResponseDto>> GetCategoryById(
+    int id)
+    {
+        var category = await _context.Categories
+            .Where(category => category.Id == id)
+            .Select(category => new CategoryResponseDto
+            {
+                Id = category.Id,
+                Name = category.Name,
+                Description = category.Description
+            })
+            .FirstOrDefaultAsync();
+
+        if (category is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(category);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult<CategoryResponseDto>> UpdateCategory(
+        int id,
+        UpdateCategoryDto dto)
+    {
+        var category = await _context.Categories
+            .FirstOrDefaultAsync(category => category.Id == id);
+
+        if (category is null)
+        {
+            return NotFound();
+        }
+
+        category.Name = dto.Name;
+        category.Description = dto.Description;
+
+        await _context.SaveChangesAsync();
+
+        var response = new CategoryResponseDto
+        {
+            Id = category.Id,
+            Name = category.Name,
+            Description = category.Description
+        };
+
+        return Ok(response);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> DeleteCategory(int id)
+    {
+        var category = await _context.Categories
+            .FirstOrDefaultAsync(category => category.Id == id);
+
+        if (category is null)
+        {
+            return NotFound();
+        }
+
+        _context.Categories.Remove(category);
+
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
 }
