@@ -40,6 +40,7 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 
 builder.Services
     .AddIdentity<ApplicationUser, IdentityRole>()
@@ -78,11 +79,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseMiddleware<ExceptionMiddleware>();
-
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 app.MapControllers();
