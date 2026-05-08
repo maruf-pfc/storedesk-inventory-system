@@ -11,45 +11,37 @@ public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
 
-    public AuthController(
-        IAuthService authService)
+    public AuthController(IAuthService authService)
     {
         _authService = authService;
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult> Register(
-        RegisterDto dto)
+    public async Task<ActionResult> Register(RegisterDto dto)
     {
-        var response = await _authService
-            .RegisterAsync(dto);
+        var response = await _authService.RegisterAsync(dto);
 
-        return Ok(
-            ApiResponse<AuthResponseDto>
+        return Ok(ApiResponse<AuthResponseDto>
                 .SuccessResponse(
                     response,
-                    "User registered successfully"));
+                    "User registered successfully"
+                ));
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult> Login(
-        LoginDto dto)
+    public async Task<ActionResult> Login(LoginDto dto)
     {
-        var response = await _authService
-            .LoginAsync(dto);
+        var response = await _authService.LoginAsync(dto);
 
         if (response is null)
         {
-            return Unauthorized(
-                ApiResponse<string>
-                    .FailureResponse(
-                        "Invalid email or password"));
+            return Unauthorized( ApiResponse<string>.FailureResponse("Invalid email or password"));
         }
 
-        return Ok(
-            ApiResponse<AuthResponseDto>
+        return Ok( ApiResponse<AuthResponseDto>
                 .SuccessResponse(
                     response,
-                    "Login successful"));
+                    "Login successful"
+                ));
     }
 }

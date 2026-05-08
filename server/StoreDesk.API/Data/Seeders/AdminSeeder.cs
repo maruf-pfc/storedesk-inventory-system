@@ -10,15 +10,12 @@ public static class AdminSeeder
         IServiceProvider serviceProvider,
         IConfiguration configuration)
     {
-        var userManager =
-            serviceProvider
-                .GetRequiredService<UserManager<ApplicationUser>>();
+        var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
         var adminEmail = configuration["AdminUser:Email"];
         var adminPassword = configuration["AdminUser:Password"];
 
-        var existingAdmin =
-            await userManager.FindByEmailAsync(adminEmail);
+        var existingAdmin = await userManager.FindByEmailAsync(adminEmail);
 
         if (existingAdmin is not null)
         {
@@ -33,22 +30,15 @@ public static class AdminSeeder
             EmailConfirmed = true
         };
 
-        var result = await userManager.CreateAsync(
-            adminUser,
-            adminPassword!);
+        var result = await userManager.CreateAsync(adminUser, adminPassword!);
 
         if (!result.Succeeded)
         {
-            var errors = string.Join(
-                ", ",
-                result.Errors.Select(error => error.Description));
+            var errors = string.Join(", ", result.Errors.Select(error => error.Description));
 
-            throw new Exception(
-                $"Failed to seed admin user: {errors}");
+            throw new Exception($"Failed to seed admin user: {errors}");
         }
 
-        await userManager.AddToRoleAsync(
-            adminUser,
-            Roles.Admin);
+        await userManager.AddToRoleAsync(adminUser, Roles.Admin);
     }
 }

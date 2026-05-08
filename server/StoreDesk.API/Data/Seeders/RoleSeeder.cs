@@ -5,12 +5,9 @@ namespace StoreDesk.API.Data.Seeders;
 
 public static class RoleSeeder
 {
-    public static async Task SeedRolesAsync(
-        IServiceProvider serviceProvider)
+    public static async Task SeedRolesAsync(IServiceProvider serviceProvider)
     {
-        var roleManager =
-            serviceProvider
-                .GetRequiredService<RoleManager<IdentityRole>>();
+        var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
         string[] roles =
         [
@@ -20,13 +17,11 @@ public static class RoleSeeder
 
         foreach (var role in roles)
         {
-            var exists =
-                await roleManager.RoleExistsAsync(role);
+            var exists = await roleManager.RoleExistsAsync(role);
 
             if (!exists)
             {
-                await roleManager.CreateAsync(
-                    new IdentityRole(role));
+                await roleManager.CreateAsync(new IdentityRole(role));
             }
         }
     }

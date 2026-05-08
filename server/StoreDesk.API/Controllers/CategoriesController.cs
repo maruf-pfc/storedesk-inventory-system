@@ -10,8 +10,7 @@ public class CategoriesController : ControllerBase
 {
     private readonly ICategoryService _categoryService;
 
-    public CategoriesController(
-        ICategoryService categoryService)
+    public CategoriesController(ICategoryService categoryService)
     {
         _categoryService = categoryService;
     }
@@ -25,8 +24,7 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<CategoryResponseDto>> GetCategoryById(
-        int id)
+    public async Task<ActionResult<CategoryResponseDto>> GetCategoryById(int id)
     {
         var category = await _categoryService.GetByIdAsync(id);
 
@@ -39,8 +37,7 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<CategoryResponseDto>> CreateCategory(
-        CreateCategoryDto dto)
+    public async Task<ActionResult<CategoryResponseDto>> CreateCategory(CreateCategoryDto dto)
     {
         var category = await _categoryService.CreateAsync(dto);
 
@@ -51,9 +48,7 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<CategoryResponseDto>> UpdateCategory(
-        int id,
-        UpdateCategoryDto dto)
+    public async Task<ActionResult<CategoryResponseDto>> UpdateCategory(int id, UpdateCategoryDto dto)
     {
         var category = await _categoryService.UpdateAsync(id, dto);
 

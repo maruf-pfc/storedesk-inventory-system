@@ -15,26 +15,18 @@ public class ItemService : IItemService
         _context = context;
     }
 
-    public async Task<IEnumerable<ItemResponseDto>> GetAllAsync(
-        string? search,
-        int? categoryId,
-        PaginationDto pagination,
-        SortDto sort)
+    public async Task<IEnumerable<ItemResponseDto>> GetAllAsync(string? search, int? categoryId, PaginationDto pagination, SortDto sort)
     {
-        var query = _context.Items
-            .Include(item => item.Category)
-            .AsQueryable();
+        var query = _context.Items.Include(item => item.Category).AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(search))
         {
-            query = query.Where(item =>
-                item.Name.ToLower().Contains(search.ToLower()));
+            query = query.Where(item => item.Name.ToLower().Contains(search.ToLower()));
         }
 
         if (categoryId.HasValue)
         {
-            query = query.Where(item =>
-                item.CategoryId == categoryId.Value);
+            query = query.Where(item => item.CategoryId == categoryId.Value);
         }
 
         query = (sort.SortBy.ToLower(), sort.SortOrder.ToLower()) switch
@@ -47,12 +39,9 @@ public class ItemService : IItemService
             _ => query.OrderBy(item => item.Name)
         };
 
-        query = query
-            .Skip((pagination.Page - 1) * pagination.PageSize)
-            .Take(pagination.PageSize);
+        query = query.Skip((pagination.Page - 1) * pagination.PageSize).Take(pagination.PageSize);
 
-        var items = await query
-            .Select(item => new ItemResponseDto
+        var items = await query.Select(item => new ItemResponseDto
             {
                 Id = item.Id,
                 Name = item.Name,
@@ -86,8 +75,7 @@ public class ItemService : IItemService
             .FirstOrDefaultAsync();
     }
 
-    public async Task<ItemResponseDto> CreateAsync(
-        CreateItemDto dto)
+    public async Task<ItemResponseDto> CreateAsync(CreateItemDto dto)
     {
         var item = new Item
         {
@@ -102,8 +90,7 @@ public class ItemService : IItemService
 
         await _context.SaveChangesAsync();
 
-        var category = await _context.Categories
-            .FirstAsync(category => category.Id == dto.CategoryId);
+        var category = await _context.Categories.FirstAsync(category => category.Id == dto.CategoryId);
 
         return new ItemResponseDto
         {
@@ -117,13 +104,9 @@ public class ItemService : IItemService
         };
     }
 
-    public async Task<ItemResponseDto?> UpdateAsync(
-        int id,
-        UpdateItemDto dto)
+    public async Task<ItemResponseDto?> UpdateAsync(int id, UpdateItemDto dto)
     {
-        var item = await _context.Items
-            .Include(item => item.Category)
-            .FirstOrDefaultAsync(item => item.Id == id);
+        var item = await _context.Items.Include(item => item.Category).FirstOrDefaultAsync(item => item.Id == id);
 
         if (item is null)
         {
@@ -152,8 +135,7 @@ public class ItemService : IItemService
 
     public async Task<bool> DeleteAsync(int id)
     {
-        var item = await _context.Items
-            .FirstOrDefaultAsync(item => item.Id == id);
+        var item = await _context.Items.FirstOrDefaultAsync(item => item.Id == id);
 
         if (item is null)
         {

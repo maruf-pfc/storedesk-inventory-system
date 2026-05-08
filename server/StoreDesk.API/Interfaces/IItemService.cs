@@ -8,15 +8,14 @@ public interface IItemService
         string? search,
         int? categoryId,
         PaginationDto pagination,
-        SortDto sort);
+        SortDto sort
+    );
 
     Task<ItemResponseDto?> GetByIdAsync(int id);
 
     Task<ItemResponseDto> CreateAsync(CreateItemDto dto);
 
-    Task<ItemResponseDto?> UpdateAsync(
-        int id,
-        UpdateItemDto dto);
+    Task<ItemResponseDto?> UpdateAsync(int id, UpdateItemDto dto);
 
     Task<bool> DeleteAsync(int id);
 }

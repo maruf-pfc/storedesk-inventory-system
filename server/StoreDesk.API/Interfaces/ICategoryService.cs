@@ -8,12 +8,9 @@ public interface ICategoryService
 
     Task<CategoryResponseDto?> GetByIdAsync(int id);
 
-    Task<CategoryResponseDto> CreateAsync(
-        CreateCategoryDto dto);
+    Task<CategoryResponseDto> CreateAsync(CreateCategoryDto dto);
 
-    Task<CategoryResponseDto?> UpdateAsync(
-        int id,
-        UpdateCategoryDto dto);
+    Task<CategoryResponseDto?> UpdateAsync(int id, UpdateCategoryDto dto);
 
     Task<bool> DeleteAsync(int id);
 }

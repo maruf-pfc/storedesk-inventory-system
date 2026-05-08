@@ -16,19 +16,15 @@ public class AuthService : IAuthService
 
     private readonly IConfiguration _configuration;
 
-    public AuthService(
-        UserManager<ApplicationUser> userManager,
-        IConfiguration configuration)
+    public AuthService(UserManager<ApplicationUser> userManager, IConfiguration configuration)
     {
         _userManager = userManager;
         _configuration = configuration;
     }
 
-    public async Task<AuthResponseDto> RegisterAsync(
-        RegisterDto dto)
+    public async Task<AuthResponseDto> RegisterAsync(RegisterDto dto)
     {
-        var existingUser = await _userManager
-            .FindByEmailAsync(dto.Email);
+        var existingUser = await _userManager.FindByEmailAsync(dto.Email);
 
         if (existingUser is not null)
         {
@@ -42,13 +38,11 @@ public class AuthService : IAuthService
             UserName = dto.Email
         };
 
-        var result = await _userManager
-            .CreateAsync(user, dto.Password);
+        var result = await _userManager.CreateAsync(user, dto.Password);
 
         if (!result.Succeeded)
         {
-            var errors = result.Errors
-                .Select(error => error.Description);
+            var errors = result.Errors.Select(error => error.Description);
 
             throw new Exception(string.Join(", ", errors));
         }
@@ -63,19 +57,16 @@ public class AuthService : IAuthService
         };
     }
 
-    public async Task<AuthResponseDto?> LoginAsync(
-        LoginDto dto)
+    public async Task<AuthResponseDto?> LoginAsync(LoginDto dto)
     {
-        var user = await _userManager
-            .FindByEmailAsync(dto.Email);
+        var user = await _userManager.FindByEmailAsync(dto.Email);
 
         if (user is null)
         {
             return null;
         }
 
-        var validPassword = await _userManager
-            .CheckPasswordAsync(user, dto.Password);
+        var validPassword = await _userManager.CheckPasswordAsync(user, dto.Password);
 
         if (!validPassword)
         {
@@ -106,32 +97,20 @@ public class AuthService : IAuthService
             new(JwtRegisteredClaimNames.Name, user.FullName)
         };
 
-        claims.AddRange(
-            roles.Select(role =>
-                new Claim(ClaimTypes.Role, role)));
+        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-        var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(
-                _configuration["Jwt:Key"]!));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
 
-        var credentials = new SigningCredentials(
-            key,
-            SecurityAlgorithms.HmacSha256);
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
             issuer: _configuration["Jwt:Issuer"],
-
             audience: _configuration["Jwt:Audience"],
-
             claims: claims,
+            expires: DateTime.UtcNow.AddMinutes(Convert.ToDouble(_configuration["Jwt:DurationInMinutes"])),
+            signingCredentials: credentials
+        );
 
-            expires: DateTime.UtcNow.AddMinutes(
-                Convert.ToDouble(
-                    _configuration["Jwt:DurationInMinutes"])),
-
-            signingCredentials: credentials);
-
-        return new JwtSecurityTokenHandler()
-            .WriteToken(token);
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }

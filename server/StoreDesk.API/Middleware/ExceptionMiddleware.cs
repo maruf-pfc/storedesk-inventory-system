@@ -10,9 +10,7 @@ public class ExceptionMiddleware
 
     private readonly ILogger<ExceptionMiddleware> _logger;
 
-    public ExceptionMiddleware(
-        RequestDelegate next,
-        ILogger<ExceptionMiddleware> logger)
+    public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
     {
         _next = next;
         _logger = logger;
@@ -26,19 +24,13 @@ public class ExceptionMiddleware
         }
         catch (Exception exception)
         {
-            _logger.LogError(
-                exception,
-                exception.Message);
+            _logger.LogError(exception, exception.Message);
 
-            context.Response.ContentType =
-                "application/json";
+            context.Response.ContentType = "application/json";
 
-            context.Response.StatusCode =
-                (int)HttpStatusCode.InternalServerError;
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-            var response =
-                ApiResponse<string>.FailureResponse(
-                    "An unexpected error occurred");
+            var response = ApiResponse<string>.FailureResponse("An unexpected error occurred");
 
             var json = JsonSerializer.Serialize(response);
 

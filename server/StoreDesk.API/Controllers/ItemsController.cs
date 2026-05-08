@@ -26,44 +26,38 @@ public class ItemsController : ControllerBase
         [FromQuery] PaginationDto pagination,
         [FromQuery] SortDto sort)
     {
-        var items = await _itemService.GetAllAsync(
-            search,
-            categoryId,
-            pagination,
-            sort);
+        var items = await _itemService.GetAllAsync(search, categoryId, pagination, sort);
 
-        return Ok(
-            ApiResponse<IEnumerable<ItemResponseDto>>
+        return Ok( ApiResponse<IEnumerable<ItemResponseDto>>
                 .SuccessResponse(
                     items,
-                    "Items fetched successfully"));
+                    "Items fetched successfully"
+                ));
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<ItemResponseDto>> GetItemById(
-        int id)
+    public async Task<ActionResult<ItemResponseDto>> GetItemById(int id)
     {
         var item = await _itemService.GetByIdAsync(id);
 
         if (item is null)
         {
-            return NotFound(
-                ApiResponse<string>
+            return NotFound(ApiResponse<string>
                     .FailureResponse(
-                        "Item not found"));
+                        "Item not found"
+                    ));
         }
 
-        return Ok(
-            ApiResponse<ItemResponseDto>
+        return Ok(ApiResponse<ItemResponseDto>
                 .SuccessResponse(
                     item,
-                    "Item fetched successfully"));
+                    "Item fetched successfully"
+                ));
     }
 
     [Authorize(Roles = Roles.Admin)]
     [HttpPost]
-    public async Task<ActionResult<ItemResponseDto>> CreateItem(
-        CreateItemDto dto)
+    public async Task<ActionResult<ItemResponseDto>> CreateItem(CreateItemDto dto)
     {
         var item = await _itemService.CreateAsync(dto);
 
@@ -73,14 +67,13 @@ public class ItemsController : ControllerBase
             ApiResponse<ItemResponseDto>
                 .SuccessResponse(
                     item,
-                    "Item created successfully"));
+                    "Item created successfully"
+                ));
     }
 
     [Authorize(Roles = Roles.Admin)]
     [HttpPut("{id}")]
-    public async Task<ActionResult<ItemResponseDto>> UpdateItem(
-        int id,
-        UpdateItemDto dto)
+    public async Task<ActionResult<ItemResponseDto>> UpdateItem(int id, UpdateItemDto dto)
     {
         var item = await _itemService.UpdateAsync(id, dto);
 
@@ -89,11 +82,11 @@ public class ItemsController : ControllerBase
             return NotFound();
         }
 
-        return Ok(
-            ApiResponse<ItemResponseDto>
+        return Ok(ApiResponse<ItemResponseDto>
                 .SuccessResponse(
                     item,
-                    "Item updated successfully"));
+                    "Item updated successfully"
+                ));
     }
 
     [Authorize(Roles = Roles.Admin)]
@@ -107,10 +100,10 @@ public class ItemsController : ControllerBase
             return NotFound();
         }
 
-        return Ok(
-            ApiResponse<string>
+        return Ok(ApiResponse<string>
                 .SuccessResponse(
                     null,
-                    "Item deleted successfully"));
+                    "Item deleted successfully"
+                ));
     }
 }
