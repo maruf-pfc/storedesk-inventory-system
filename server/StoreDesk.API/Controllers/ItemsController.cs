@@ -2,9 +2,12 @@ using Microsoft.AspNetCore.Mvc;
 using StoreDesk.API.DTOs;
 using StoreDesk.API.Interfaces;
 using StoreDesk.API.Common;
+using Microsoft.AspNetCore.Authorization;
+using StoreDesk.API.Constants;
 
 namespace StoreDesk.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/items")]
 public class ItemsController : ControllerBase
@@ -57,6 +60,7 @@ public class ItemsController : ControllerBase
                     "Item fetched successfully"));
     }
 
+    [Authorize(Roles = Roles.Admin)]
     [HttpPost]
     public async Task<ActionResult<ItemResponseDto>> CreateItem(
         CreateItemDto dto)
@@ -72,6 +76,7 @@ public class ItemsController : ControllerBase
                     "Item created successfully"));
     }
 
+    [Authorize(Roles = Roles.Admin)]
     [HttpPut("{id}")]
     public async Task<ActionResult<ItemResponseDto>> UpdateItem(
         int id,
@@ -91,6 +96,7 @@ public class ItemsController : ControllerBase
                     "Item updated successfully"));
     }
 
+    [Authorize(Roles = Roles.Admin)]
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteItem(int id)
     {

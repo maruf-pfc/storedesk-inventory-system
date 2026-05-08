@@ -10,6 +10,7 @@ using StoreDesk.API.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using StoreDesk.API.Data.Seeders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -99,5 +100,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    await RoleSeeder.SeedRolesAsync(services);
+}
 
 app.Run();

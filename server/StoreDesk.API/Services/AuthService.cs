@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using StoreDesk.API.DTOs;
 using StoreDesk.API.Interfaces;
 using StoreDesk.API.Models;
+using StoreDesk.API.Constants;
 
 namespace StoreDesk.API.Services;
 
@@ -52,7 +53,7 @@ public class AuthService : IAuthService
             throw new Exception(string.Join(", ", errors));
         }
 
-        var token = GenerateJwtToken(user);
+        var token = await GenerateJwtToken(user);
 
         return new AuthResponseDto
         {
@@ -81,7 +82,7 @@ public class AuthService : IAuthService
             return null;
         }
 
-        var token = GenerateJwtToken(user);
+        var token = await GenerateJwtToken(user);
 
         return new AuthResponseDto
         {
@@ -91,9 +92,11 @@ public class AuthService : IAuthService
         };
     }
 
-    private string GenerateJwtToken(
-        ApplicationUser user)
+    private async Task<string> GenerateJwtToken(
+    ApplicationUser user)
     {
+        var roles = await _userManager.GetRolesAsync(user);
+
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Sub, user.Id),
@@ -102,6 +105,10 @@ public class AuthService : IAuthService
 
             new(JwtRegisteredClaimNames.Name, user.FullName)
         };
+
+        claims.AddRange(
+            roles.Select(role =>
+                new Claim(ClaimTypes.Role, role)));
 
         var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(
