@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using StoreDesk.API.DTOs;
 using StoreDesk.API.Interfaces;
+using StoreDesk.API.Common;
 
 namespace StoreDesk.API.Controllers;
 
@@ -28,7 +29,11 @@ public class ItemsController : ControllerBase
             pagination,
             sort);
 
-        return Ok(items);
+        return Ok(
+            ApiResponse<IEnumerable<ItemResponseDto>>
+                .SuccessResponse(
+                    items,
+                    "Items fetched successfully"));
     }
 
     [HttpGet("{id}")]
@@ -39,10 +44,17 @@ public class ItemsController : ControllerBase
 
         if (item is null)
         {
-            return NotFound();
+            return NotFound(
+                ApiResponse<string>
+                    .FailureResponse(
+                        "Item not found"));
         }
 
-        return Ok(item);
+        return Ok(
+            ApiResponse<ItemResponseDto>
+                .SuccessResponse(
+                    item,
+                    "Item fetched successfully"));
     }
 
     [HttpPost]
@@ -54,7 +66,10 @@ public class ItemsController : ControllerBase
         return CreatedAtAction(
             nameof(GetItemById),
             new { id = item.Id },
-            item);
+            ApiResponse<ItemResponseDto>
+                .SuccessResponse(
+                    item,
+                    "Item created successfully"));
     }
 
     [HttpPut("{id}")]
@@ -69,7 +84,11 @@ public class ItemsController : ControllerBase
             return NotFound();
         }
 
-        return Ok(item);
+        return Ok(
+            ApiResponse<ItemResponseDto>
+                .SuccessResponse(
+                    item,
+                    "Item updated successfully"));
     }
 
     [HttpDelete("{id}")]
@@ -82,6 +101,10 @@ public class ItemsController : ControllerBase
             return NotFound();
         }
 
-        return NoContent();
+        return Ok(
+            ApiResponse<string>
+                .SuccessResponse(
+                    null,
+                    "Item deleted successfully"));
     }
 }
