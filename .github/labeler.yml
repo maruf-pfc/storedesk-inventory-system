@@ -1,30 +1,56 @@
 server:
-  - "server/**"
+  - changed-files:
+      - any-glob-to-any-file:
+          - "server/**"
 
 client:
-  - "client/**"
+  - changed-files:
+      - any-glob-to-any-file:
+          - "client/**"
 
 docs:
-  - "**/*.md"
+  - changed-files:
+      - any-glob-to-any-file:
+          - "docs/**"
+          - "**/*.md"
 
 github-actions:
-  - ".github/**"
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/**"
 
 database:
-  - "server/**/Migrations/**"
-  - "server/**/Data/**"
+  - changed-files:
+      - any-glob-to-any-file:
+          - "server/**/Migrations/**"
+          - "server/**/Data/**"
 
 api:
-  - "server/**/Controllers/**"
+  - changed-files:
+      - any-glob-to-any-file:
+          - "server/**/Controllers/**"
 
 models:
-  - "server/**/Models/**"
+  - changed-files:
+      - any-glob-to-any-file:
+          - "server/**/Models/**"
 
 services:
-  - "server/**/Services/**"
+  - changed-files:
+      - any-glob-to-any-file:
+          - "server/**/Services/**"
 
 ui:
-  - "client/**/components/**"
+  - changed-files:
+      - any-glob-to-any-file:
+          - "client/**/components/**"
 
 pages:
-  - "client/**/pages/**"
+  - changed-files:
+      - any-glob-to-any-file:
+          - "client/**/pages/**"
+
+uiux:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "uiux/**"
