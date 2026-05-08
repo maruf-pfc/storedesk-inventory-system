@@ -1,0 +1,30 @@
+backend:
+  - "backend/**"
+
+frontend:
+  - "frontend/**"
+
+documentation:
+  - "**/*.md"
+
+github-actions:
+  - ".github/**"
+
+database:
+  - "backend/**/Migrations/**"
+  - "backend/**/Data/**"
+
+api:
+  - "backend/**/Controllers/**"
+
+models:
+  - "backend/**/Models/**"
+
+services:
+  - "backend/**/Services/**"
+
+ui:
+  - "frontend/**/components/**"
+
+pages:
+  - "frontend/**/pages/**"
