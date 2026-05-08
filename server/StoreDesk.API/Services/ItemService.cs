@@ -65,6 +65,7 @@ public class ItemService : IItemService
             .ToListAsync();
 
         return items;
+        // throw new Exception("Test exception");
     }
 
     public async Task<ItemResponseDto?> GetByIdAsync(int id)
