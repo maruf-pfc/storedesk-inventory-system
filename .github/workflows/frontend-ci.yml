@@ -1,4 +1,4 @@
-name: Frontend CI
+name: Client CI
 
 on:
   push:
@@ -16,7 +16,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: frontend/storedesk-client
+        working-directory: client/storedesk-client
 
     steps:
       - name: Checkout repository
