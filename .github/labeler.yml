@@ -1,30 +1,30 @@
-backend:
-  - "backend/**"
+server:
+  - "server/**"
 
-frontend:
-  - "frontend/**"
+client:
+  - "client/**"
 
-documentation:
+docs:
   - "**/*.md"
 
 github-actions:
   - ".github/**"
 
 database:
-  - "backend/**/Migrations/**"
-  - "backend/**/Data/**"
+  - "server/**/Migrations/**"
+  - "server/**/Data/**"
 
 api:
-  - "backend/**/Controllers/**"
+  - "server/**/Controllers/**"
 
 models:
-  - "backend/**/Models/**"
+  - "server/**/Models/**"
 
 services:
-  - "backend/**/Services/**"
+  - "server/**/Services/**"
 
 ui:
-  - "frontend/**/components/**"
+  - "client/**/components/**"
 
 pages:
-  - "frontend/**/pages/**"
+  - "client/**/pages/**"
