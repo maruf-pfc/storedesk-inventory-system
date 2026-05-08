@@ -91,3 +91,24 @@ Accept: application/json
 ###
 GET {{StoreDesk.API_HostAddress}}/api/items?sortBy=quantity
 Accept: application/json
+
+###
+POST {{StoreDesk.API_HostAddress}}/api/auth/register
+Content-Type: application/json
+Accept: application/json
+
+{
+  "fullName": "Maruf Sarker",
+  "email": "marufsarker.work@gmail.com",
+  "password": "Mmsmaruf123!"
+}
+
+###
+POST {{StoreDesk.API_HostAddress}}/api/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "marufsarker.work@gmail.com",
+  "password": "Mmsmaruf123!"
+}
