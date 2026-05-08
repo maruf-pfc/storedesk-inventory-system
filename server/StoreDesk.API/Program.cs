@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using StoreDesk.API.Data;
+using StoreDesk.API.Interfaces;
+using StoreDesk.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,8 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IItemService, ItemService>();
 
 var app = builder.Build();
 

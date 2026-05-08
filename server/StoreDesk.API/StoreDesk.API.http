@@ -45,3 +45,15 @@ Content-Type: application/json
 {
   "name": ""
 }
+
+###
+POST {{StoreDesk.API_HostAddress}}/api/items
+Content-Type: application/json
+
+{
+  "name": "Laptop",
+  "description": "Gaming laptop",
+  "price": 1200,
+  "quantity": 10,
+  "categoryId": 3
+}
