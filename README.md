@@ -7,8 +7,8 @@ Full-stack web application built with ASP.NET Core 10 Web API + ReactJS + Postgr
 ```txt
 StoreDesk/
 ├── .github/
-└── client/
-└── docs/
+├── client/
+├── docs/
 ├── server/StoreDesk.API/
 └── uiux/
 ```

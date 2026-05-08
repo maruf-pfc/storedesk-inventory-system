@@ -1,6 +1,13 @@
 @StoreDesk.API_HostAddress = http://localhost:5196
 
-GET {{StoreDesk.API_HostAddress}}/weatherforecast/
+GET {{StoreDesk.API_HostAddress}}/api/categories
 Accept: application/json
 
 ###
+POST {{StoreDesk.API_HostAddress}}/api/categories
+Content-Type: application/json
+
+{
+  "name": "Electronics",
+  "description": "Electronic products"
+}
