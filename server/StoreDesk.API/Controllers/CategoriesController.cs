@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using StoreDesk.API.Data;
 using StoreDesk.API.DTOs;
-using StoreDesk.API.Models;
+using StoreDesk.API.Interfaces;
 
 namespace StoreDesk.API.Controllers;
 
@@ -10,68 +8,27 @@ namespace StoreDesk.API.Controllers;
 [Route("api/categories")]
 public class CategoriesController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly ICategoryService _categoryService;
 
-    public CategoriesController(AppDbContext context)
+    public CategoriesController(
+        ICategoryService categoryService)
     {
-        _context = context;
+        _categoryService = categoryService;
     }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CategoryResponseDto>>> GetCategories()
     {
-        var categories = await _context.Categories
-            .Select(category => new CategoryResponseDto
-            {
-                Id = category.Id,
-                Name = category.Name,
-                Description = category.Description
-            })
-            .ToListAsync();
+        var categories = await _categoryService.GetAllAsync();
 
         return Ok(categories);
     }
 
-    [HttpPost]
-    public async Task<ActionResult<CategoryResponseDto>> CreateCategory(
-        CreateCategoryDto dto)
-    {
-        var category = new Category
-        {
-            Name = dto.Name,
-            Description = dto.Description
-        };
-
-        _context.Categories.Add(category);
-
-        await _context.SaveChangesAsync();
-
-        var response = new CategoryResponseDto
-        {
-            Id = category.Id,
-            Name = category.Name,
-            Description = category.Description
-        };
-
-        return CreatedAtAction(
-            nameof(GetCategories),
-            new { id = category.Id },
-            response);
-    }
-
     [HttpGet("{id}")]
     public async Task<ActionResult<CategoryResponseDto>> GetCategoryById(
-    int id)
+        int id)
     {
-        var category = await _context.Categories
-            .Where(category => category.Id == id)
-            .Select(category => new CategoryResponseDto
-            {
-                Id = category.Id,
-                Name = category.Name,
-                Description = category.Description
-            })
-            .FirstOrDefaultAsync();
+        var category = await _categoryService.GetByIdAsync(id);
 
         if (category is null)
         {
@@ -81,48 +38,42 @@ public class CategoriesController : ControllerBase
         return Ok(category);
     }
 
+    [HttpPost]
+    public async Task<ActionResult<CategoryResponseDto>> CreateCategory(
+        CreateCategoryDto dto)
+    {
+        var category = await _categoryService.CreateAsync(dto);
+
+        return CreatedAtAction(
+            nameof(GetCategoryById),
+            new { id = category.Id },
+            category);
+    }
+
     [HttpPut("{id}")]
     public async Task<ActionResult<CategoryResponseDto>> UpdateCategory(
         int id,
         UpdateCategoryDto dto)
     {
-        var category = await _context.Categories
-            .FirstOrDefaultAsync(category => category.Id == id);
+        var category = await _categoryService.UpdateAsync(id, dto);
 
         if (category is null)
         {
             return NotFound();
         }
 
-        category.Name = dto.Name;
-        category.Description = dto.Description;
-
-        await _context.SaveChangesAsync();
-
-        var response = new CategoryResponseDto
-        {
-            Id = category.Id,
-            Name = category.Name,
-            Description = category.Description
-        };
-
-        return Ok(response);
+        return Ok(category);
     }
 
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteCategory(int id)
     {
-        var category = await _context.Categories
-            .FirstOrDefaultAsync(category => category.Id == id);
+        var deleted = await _categoryService.DeleteAsync(id);
 
-        if (category is null)
+        if (!deleted)
         {
             return NotFound();
         }
-
-        _context.Categories.Remove(category);
-
-        await _context.SaveChangesAsync();
 
         return NoContent();
     }
