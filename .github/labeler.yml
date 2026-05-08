@@ -1,41 +1,30 @@
-backend:
-  - changed-files:
-      - any-glob-to-any-file: "backend/**"
+server:
+  - "server/**"
 
-frontend:
-  - changed-files:
-      - any-glob-to-any-file: "frontend/**"
+client:
+  - "client/**"
 
-documentation:
-  - changed-files:
-      - any-glob-to-any-file: "**/*.md"
+docs:
+  - "**/*.md"
 
 github-actions:
-  - changed-files:
-      - any-glob-to-any-file: ".github/**"
+  - ".github/**"
 
 database:
-  - changed-files:
-      - any-glob-to-any-file:
-          - "backend/**/Migrations/**"
-          - "backend/**/Data/**"
+  - "server/**/Migrations/**"
+  - "server/**/Data/**"
 
 api:
-  - changed-files:
-      - any-glob-to-any-file: "backend/**/Controllers/**"
+  - "server/**/Controllers/**"
 
 models:
-  - changed-files:
-      - any-glob-to-any-file: "backend/**/Models/**"
+  - "server/**/Models/**"
 
 services:
-  - changed-files:
-      - any-glob-to-any-file: "backend/**/Services/**"
+  - "server/**/Services/**"
 
 ui:
-  - changed-files:
-      - any-glob-to-any-file: "frontend/**/components/**"
+  - "client/**/components/**"
 
 pages:
-  - changed-files:
-      - any-glob-to-any-file: "frontend/**/pages/**"
+  - "client/**/pages/**"
