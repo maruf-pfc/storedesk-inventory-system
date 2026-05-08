@@ -7,9 +7,14 @@ Accept: application/json
 POST {{StoreDesk.API_HostAddress}}/api/categories
 Content-Type: application/json
 
+# {
+#   "name": "Electronics",
+#   "description": "Electronic products"
+# }
+// add more categories as needed
 {
-  "name": "Electronics",
-  "description": "Electronic products"
+  "name": "Books",
+  "description": "All kinds of books"
 }
 
 ###
@@ -50,12 +55,20 @@ Content-Type: application/json
 POST {{StoreDesk.API_HostAddress}}/api/items
 Content-Type: application/json
 
+# {
+#   "name": "Laptop",
+#   "description": "Gaming laptop",
+#   "price": 1200,
+#   "quantity": 10,
+#   "categoryId": 3
+# }
+// add more real items
 {
-  "name": "Laptop",
-  "description": "Gaming laptop",
-  "price": 1200,
-  "quantity": 10,
-  "categoryId": 3
+  "name": "The Great Gatsby",
+  "description": "A fascinating book",
+  "price": 20,
+  "quantity": 50,
+  "categoryId": 4
 }
 
 ###
@@ -64,4 +77,12 @@ Accept: application/json
 
 ###
 GET {{StoreDesk.API_HostAddress}}/api/items?page=2&pageSize=5
+Accept: application/json
+
+###
+GET {{StoreDesk.API_HostAddress}}/api/items?sortBy=price&sortOrder=desc
+Accept: application/json
+
+###
+GET {{StoreDesk.API_HostAddress}}/api/items?sortBy=quantity
 Accept: application/json

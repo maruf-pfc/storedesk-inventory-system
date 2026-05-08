@@ -19,12 +19,14 @@ public class ItemsController : ControllerBase
     public async Task<ActionResult<IEnumerable<ItemResponseDto>>> GetItems(
         [FromQuery] string? search,
         [FromQuery] int? categoryId,
-        [FromQuery] PaginationDto pagination)
+        [FromQuery] PaginationDto pagination,
+        [FromQuery] SortDto sort)
     {
         var items = await _itemService.GetAllAsync(
             search,
             categoryId,
-            pagination);
+            pagination,
+            sort);
 
         return Ok(items);
     }

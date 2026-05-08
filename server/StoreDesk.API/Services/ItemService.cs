@@ -18,7 +18,8 @@ public class ItemService : IItemService
     public async Task<IEnumerable<ItemResponseDto>> GetAllAsync(
         string? search,
         int? categoryId,
-        PaginationDto pagination)
+        PaginationDto pagination,
+        SortDto sort)
     {
         var query = _context.Items
             .Include(item => item.Category)
@@ -35,6 +36,16 @@ public class ItemService : IItemService
             query = query.Where(item =>
                 item.CategoryId == categoryId.Value);
         }
+
+        query = (sort.SortBy.ToLower(), sort.SortOrder.ToLower()) switch
+        {
+            ("price", "desc") => query.OrderByDescending(item => item.Price),
+            ("price", _) => query.OrderBy(item => item.Price),
+            ("quantity", "desc") => query.OrderByDescending(item => item.Quantity),
+            ("quantity", _) => query.OrderBy(item => item.Quantity),
+            ("name", "desc") => query.OrderByDescending(item => item.Name),
+            _ => query.OrderBy(item => item.Name)
+        };
 
         query = query
             .Skip((pagination.Page - 1) * pagination.PageSize)
