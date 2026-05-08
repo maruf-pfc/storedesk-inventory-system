@@ -1,24 +1,41 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
+import { useEffect } from "react";
+
 import AppLayout from "./components/layout/AppLayout";
 
 import DashboardPage from "./pages/DashboardPage";
 import CategoriesPage from "./pages/CategoriesPage";
 import ItemsPage from "./pages/ItemsPage";
 import TransactionsPage from "./pages/TransactionsPage";
+import LoginPage from "./pages/LoginPage";
+
+import ProtectedRoute from "./routes/ProtectedRoute";
+
+import { useAuthStore } from "./store/authStore";
 
 export default function App() {
+  const initializeAuth = useAuthStore((state) => state.initializeAuth);
+
+  useEffect(() => {
+    initializeAuth();
+  }, [initializeAuth]);
+
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<AppLayout />}>
-          <Route path="/" element={<DashboardPage />} />
+        <Route path="/login" element={<LoginPage />} />
 
-          <Route path="/categories" element={<CategoriesPage />} />
+        <Route element={<ProtectedRoute />}>
+          <Route element={<AppLayout />}>
+            <Route path="/" element={<DashboardPage />} />
 
-          <Route path="/items" element={<ItemsPage />} />
+            <Route path="/categories" element={<CategoriesPage />} />
 
-          <Route path="/transactions" element={<TransactionsPage />} />
+            <Route path="/items" element={<ItemsPage />} />
+
+            <Route path="/transactions" element={<TransactionsPage />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>
