@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
 import Skeleton from "../components/ui/Skeleton";
@@ -13,27 +15,42 @@ import {
   updateCategory,
 } from "../services/categoryService";
 import type { Category, CreateCategoryPayload } from "../types/category";
-import { toast } from "sonner";
+
+const ITEMS_PER_PAGE = 5;
 
 export default function CategoriesPage() {
   const queryClient = useQueryClient();
-  const [search, setSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
-    null,
-  );
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const search = searchParams.get("search") || "";
+  const sort = searchParams.get("sort") || "asc";
+  const page = Number(searchParams.get("page") || 1);
 
   const { data: categories = [], isLoading } = useQuery({
     queryKey: ["categories"],
+
     queryFn: getCategories,
   });
 
   const filteredCategories = useMemo(() => {
-    return categories.filter((category) =>
+    const filtered = categories.filter((category) =>
       category.name.toLowerCase().includes(search.toLowerCase()),
     );
-  }, [categories, search]);
+
+    filtered.sort((a, b) => {
+      const comparison = a.name.localeCompare(b.name);
+
+      return sort === "asc" ? comparison : -comparison;
+    });
+
+    return filtered;
+  }, [categories, search, sort]);
+
+  const paginatedCategories = filteredCategories.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE,);
+
+  const totalPages = Math.ceil(filteredCategories.length / ITEMS_PER_PAGE) || 1;
 
   const createMutation = useMutation({
     mutationFn: createCategory,
@@ -49,9 +66,7 @@ export default function CategoriesPage() {
 
       const optimisticCategory: Category = {
         id: Date.now(),
-
         name: payload.name,
-
         description: payload.description,
       };
 
@@ -238,12 +253,42 @@ export default function CategoriesPage() {
       </div>
 
       <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-        <div className="mb-5">
-          <Input
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search categories..."
-          />
+        <div className="mb-5 flex flex-col gap-3 sm:flex-row">
+          <div className="flex-1">
+            <Input
+              value={search}
+              onChange={(event) => {
+                setSearchParams({
+                  search: event.target.value,
+                  sort,
+                  page: "1",
+                });
+              }}
+              placeholder="Search categories..."
+            />
+          </div>
+
+          <select
+            value={sort}
+            onChange={(event) =>
+              setSearchParams({
+                search,
+                sort: event.target.value,
+                page: "1",
+              })
+            }
+            className="
+              rounded-lg border border-slate-300
+              bg-white px-3 py-2 text-sm
+              focus:border-blue-500
+              focus:outline-none
+              focus:ring-2 focus:ring-blue-500
+            "
+          >
+            <option value="asc">A-Z</option>
+
+            <option value="desc">Z-A</option>
+          </select>
         </div>
 
         {isLoading ? (
@@ -255,11 +300,51 @@ export default function CategoriesPage() {
             ))}
           </div>
         ) : (
-          <CategoriesTable
-            categories={filteredCategories}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
+          <>
+            <CategoriesTable
+              categories={paginatedCategories}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+
+            <div className="mt-5 flex items-center justify-between">
+              <p className="text-sm text-slate-500">
+                Page {page} of {totalPages}
+              </p>
+
+              <div className="flex gap-2">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  disabled={page <= 1}
+                  onClick={() =>
+                    setSearchParams({
+                      search,
+                      sort,
+                      page: String(page - 1),
+                    })
+                  }
+                >
+                  Previous
+                </Button>
+
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  disabled={page >= totalPages}
+                  onClick={() =>
+                    setSearchParams({
+                      search,
+                      sort,
+                      page: String(page + 1),
+                    })
+                  }
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          </>
         )}
       </div>
 
