@@ -1,46 +1,54 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import EmptyState from "../components/ui/EmptyState";
+import Skeleton from "../components/ui/Skeleton";
 import StatCard from "../components/ui/StatCard";
+
 import { getDashboardStats } from "../services/dashboardService";
-import type { DashboardStats } from "../types/dashboard";
 
 export default function DashboardPage() {
-  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const {
+    data: stats,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["dashboard-stats"],
 
-  const [loading, setLoading] = useState(true);
+    queryFn: getDashboardStats,
+  });
 
-  async function loadDashboard() {
-    try {
-      const data = await getDashboardStats();
-
-      setStats(data);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    async function initializeDashboard() {
-      await loadDashboard();
-    }
-
-    initializeDashboard();
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <p className="text-sm text-slate-500">Loading dashboard...</p>
+      <div className="space-y-8">
+        <div>
+          <Skeleton className="h-8 w-48" />
+
+          <Skeleton className="mt-2 h-4 w-72" />
+        </div>
+
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-5">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <div
+              key={index}
+              className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
+            >
+              <Skeleton className="h-4 w-24" />
+
+              <Skeleton className="mt-4 h-10 w-20" />
+
+              <Skeleton className="mt-3 h-4 w-32" />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
 
-  if (!stats) {
+  if (isError || !stats) {
     return (
-      <div className="py-20 text-center">
-        <p className="text-sm text-red-600">Failed to load dashboard</p>
-      </div>
+      <EmptyState
+        title="Failed to load dashboard"
+        description="Something went wrong while loading dashboard statistics."
+      />
     );
   }
 
