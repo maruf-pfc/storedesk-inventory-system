@@ -1,27 +1,21 @@
-import { Outlet, useNavigate } from "react-router-dom";
-import Header from "./Header";
+import { useState } from "react";
+
+import { Outlet } from "react-router-dom";
+
 import Sidebar from "./Sidebar";
-import { useAuthStore } from "../../store/authStore";
+import Header from "./Header";
 
 export default function AppLayout() {
-  const logout = useAuthStore((state) => state.logout);
-
-  const navigate = useNavigate();
-
-  function handleLogout() {
-    logout();
-
-    navigate("/login");
-  }
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div className="flex min-h-screen bg-slate-50 text-slate-900">
-      <Sidebar onLogout={handleLogout} />
+      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <div className="flex flex-1 flex-col">
-        <Header />
+        <Header onMenuClick={() => setSidebarOpen(true)} />
 
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6">
           <Outlet />
         </main>
       </div>

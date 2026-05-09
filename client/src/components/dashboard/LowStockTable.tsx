@@ -1,62 +1,56 @@
-import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
+import Button from "../ui/Button";
 import DataTable from "../ui/DataTable";
 import EmptyState from "../ui/EmptyState";
-import StatusBadge from "../ui/StatusBadge";
-import Skeleton from "../ui/Skeleton";
-import { getLowStockItems } from "../../services/dashboardService";
-import type { LowStockItem } from "../../types/dashboard";
+import StockBadge from "../items/StockBadge";
+import type { Item } from "../../types/item";
 
-export default function LowStockTable() {
-  const { data, isLoading, isError } = useQuery<LowStockItem[]>({
-    queryKey: ["low-stock-items"],
+interface LowStockTableProps {
+  items: Item[];
+}
 
-    queryFn: getLowStockItems,
-  });
-
-  if (isLoading) {
-    return (
-      <div className="space-y-3">
-        {Array.from({ length: 5 }).map((_, index) => (
-          <Skeleton key={index} className="h-12 w-full" />
-        ))}
-      </div>
-    );
-  }
-
-  if (isError || !data) {
-    return (
-      <EmptyState
-        title="Failed to load low stock items"
-        description="Unable to fetch inventory alerts."
-      />
-    );
-  }
-
-  if (data.length === 0) {
+export default function LowStockTable({ items }: LowStockTableProps) {
+  if (items.length === 0) {
     return (
       <EmptyState
         title="No low stock items"
-        description="Inventory levels are healthy."
+        description="Inventory levels look healthy."
       />
     );
   }
 
   return (
-    <DataTable headers={["Item", "Category", "Quantity", "Status"]}>
-      {data.map((item) => (
+    <DataTable headers={["Item", "Category", "Quantity", "Status", "Actions"]}>
+      {items.map((item) => (
         <tr key={item.id} className="hover:bg-slate-50">
-          <td className="px-6 py-4 text-sm font-medium text-slate-900">
-            {item.name}
+          <td className="px-6 py-4">
+            <div>
+              <p className="text-sm font-medium text-slate-900">{item.name}</p>
+
+              <p className="mt-1 text-sm text-slate-500">
+                {item.description || "No description"}
+              </p>
+            </div>
           </td>
 
           <td className="px-6 py-4 text-sm text-slate-600">
             {item.categoryName}
           </td>
 
-          <td className="px-6 py-4 text-sm text-slate-600">{item.quantity}</td>
+          <td className="px-6 py-4 text-sm font-medium text-slate-900">
+            {item.quantity}
+          </td>
 
           <td className="px-6 py-4">
-            <StatusBadge status="warning">Low Stock</StatusBadge>
+            <StockBadge quantity={item.quantity} />
+          </td>
+
+          <td className="px-6 py-4">
+            <Link to="/items">
+              <Button size="sm" variant="secondary">
+                View
+              </Button>
+            </Link>
           </td>
         </tr>
       ))}

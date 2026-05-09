@@ -48,12 +48,14 @@ public class AuthService : IAuthService
         }
 
         var token = await GenerateJwtToken(user);
+        var roles = await _userManager.GetRolesAsync(user);
 
         return new AuthResponseDto
         {
             Token = token,
             Email = user.Email!,
-            FullName = user.FullName
+            FullName = user.FullName,
+            Role = roles.FirstOrDefault() ?? Roles.User
         };
     }
 

@@ -1,10 +1,14 @@
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import EmptyState from "../components/ui/EmptyState";
 import Skeleton from "../components/ui/Skeleton";
 import StatCard from "../components/ui/StatCard";
-import { getDashboardStats } from "../services/dashboardService";
+import DashboardSection from "../components/dashboard/DashboardSection";
 import LowStockTable from "../components/dashboard/LowStockTable";
 import RecentTransactionsTable from "../components/dashboard/RecentTransactionsTable";
+import { getDashboardStats } from "../services/dashboardService";
+import { getItems } from "../services/itemService";
+import { getTransactions } from "../services/transactionService";
 
 export default function DashboardPage() {
   const {
@@ -17,6 +21,31 @@ export default function DashboardPage() {
     queryFn: getDashboardStats,
   });
 
+  const { data: items = [] } = useQuery({
+    queryKey: ["items"],
+
+    queryFn: getItems,
+  });
+
+  const { data: transactions = [] } = useQuery({
+    queryKey: ["transactions"],
+
+    queryFn: getTransactions,
+  });
+
+  const lowStockItems = useMemo(() => {
+    return items.filter((item) => item.quantity <= 5).slice(0, 5);
+  }, [items]);
+
+  const recentTransactions = useMemo(() => {
+    return [...transactions]
+      .sort(
+        (a, b) =>
+          new Date(b.issuedAt).getTime() - new Date(a.issuedAt).getTime(),
+      )
+      .slice(0, 5);
+  }, [transactions]);
+
   if (isLoading) {
     return (
       <div className="space-y-8">
@@ -27,13 +56,20 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-5">
-          {Array.from({ length: 5 }).map((_, index) => (
+          {Array.from({
+            length: 5,
+          }).map((_, index) => (
             <div
               key={index}
-              className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
+              className="
+                  rounded-xl border border-slate-200
+                  bg-white p-5 shadow-sm
+                "
             >
               <Skeleton className="h-4 w-24" />
+
               <Skeleton className="mt-4 h-10 w-20" />
+
               <Skeleton className="mt-3 h-4 w-32" />
             </div>
           ))}
@@ -96,37 +132,19 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="mb-4">
-            <h2 className="text-lg font-semibold text-slate-900">
-              Low Stock Alert
-            </h2>
+        <DashboardSection
+          title="Low Stock Alert"
+          description="Items requiring immediate attention"
+        >
+          <LowStockTable items={lowStockItems} />
+        </DashboardSection>
 
-            <p className="mt-1 text-sm text-slate-500">
-              Items requiring restock soon
-            </p>
-          </div>
-
-          <div className="rounded-lg border border-dashed border-slate-300 py-10 text-center">
-            <LowStockTable />
-          </div>
-        </div>
-
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="mb-4">
-            <h2 className="text-lg font-semibold text-slate-900">
-              Recent Transactions
-            </h2>
-
-            <p className="mt-1 text-sm text-slate-500">
-              Latest inventory activities
-            </p>
-          </div>
-
-          <div className="rounded-lg border border-dashed border-slate-300 py-10 text-center">
-            <RecentTransactionsTable />
-          </div>
-        </div>
+        <DashboardSection
+          title="Recent Transactions"
+          description="Latest inventory activities"
+        >
+          <RecentTransactionsTable transactions={recentTransactions} />
+        </DashboardSection>
       </div>
     </div>
   );
