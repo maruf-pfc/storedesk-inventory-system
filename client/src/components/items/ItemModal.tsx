@@ -32,7 +32,7 @@ export default function ItemModal({
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<ItemFormValues>({
+  } = useForm({
     resolver: zodResolver(itemSchema),
 
     defaultValues: {
