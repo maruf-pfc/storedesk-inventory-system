@@ -13,6 +13,7 @@ import {
   updateCategory,
 } from "../services/categoryService";
 import type { Category, CreateCategoryPayload } from "../types/category";
+import { toast } from "sonner";
 
 export default function CategoriesPage() {
   const queryClient = useQueryClient();
@@ -25,7 +26,6 @@ export default function CategoriesPage() {
 
   const { data: categories = [], isLoading } = useQuery({
     queryKey: ["categories"],
-
     queryFn: getCategories,
   });
 
@@ -38,12 +38,49 @@ export default function CategoriesPage() {
   const createMutation = useMutation({
     mutationFn: createCategory,
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({
+    onMutate: async (payload) => {
+      await queryClient.cancelQueries({
         queryKey: ["categories"],
       });
 
+      const previousCategories = queryClient.getQueryData<Category[]>([
+        "categories",
+      ]);
+
+      const optimisticCategory: Category = {
+        id: Date.now(),
+
+        name: payload.name,
+
+        description: payload.description,
+      };
+
+      queryClient.setQueryData<Category[]>(["categories"], (old = []) => [
+        optimisticCategory,
+        ...old,
+      ]);
+
       setModalOpen(false);
+
+      return {
+        previousCategories,
+      };
+    },
+
+    onError: (_error, _payload, context) => {
+      queryClient.setQueryData(["categories"], context?.previousCategories);
+
+      toast.error("Failed to create category");
+    },
+
+    onSuccess: () => {
+      toast.success("Category created successfully");
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["categories"],
+      });
     },
   });
 
@@ -57,28 +94,91 @@ export default function CategoriesPage() {
       payload: CreateCategoryPayload;
     }) => updateCategory(id, payload),
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({
+    onMutate: async ({ id, payload }) => {
+      await queryClient.cancelQueries({
         queryKey: ["categories"],
       });
 
+      const previousCategories = queryClient.getQueryData<Category[]>([
+        "categories",
+      ]);
+
+      queryClient.setQueryData<Category[]>(["categories"], (old = []) =>
+        old.map((category) =>
+          category.id === id
+            ? {
+                ...category,
+                ...payload,
+              }
+            : category,
+        ),
+      );
+
       setModalOpen(false);
 
+      return {
+        previousCategories,
+      };
+    },
+
+    onError: (_error, _variables, context) => {
+      queryClient.setQueryData(["categories"], context?.previousCategories);
+
+      toast.error("Failed to update category");
+    },
+
+    onSuccess: () => {
+      toast.success("Category updated successfully");
+
       setSelectedCategory(null);
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["categories"],
+      });
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: deleteCategory,
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({
         queryKey: ["categories"],
       });
 
+      const previousCategories = queryClient.getQueryData<Category[]>([
+        "categories",
+      ]);
+
+      queryClient.setQueryData<Category[]>(["categories"], (old = []) =>
+        old.filter((category) => category.id !== id),
+      );
+
       setDeleteOpen(false);
 
+      return {
+        previousCategories,
+      };
+    },
+
+    onError: (_error, _id, context) => {
+      queryClient.setQueryData(["categories"], context?.previousCategories);
+
+      toast.error("Failed to delete category");
+    },
+
+    onSuccess: () => {
+      toast.success("Category deleted successfully");
+
       setSelectedCategory(null);
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["categories"],
+      });
     },
   });
 

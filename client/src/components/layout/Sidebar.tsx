@@ -1,5 +1,9 @@
 import { NavLink } from "react-router-dom";
 
+interface SidebarProps {
+  onLogout: () => void;
+}
+
 const navigationItems = [
   {
     label: "Dashboard",
@@ -19,7 +23,7 @@ const navigationItems = [
   },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ onLogout }: SidebarProps) {
   return (
     <aside className="flex h-screen w-64 flex-col border-r border-slate-800 bg-slate-900">
       <div className="border-b border-slate-800 px-6 py-5">
@@ -37,19 +41,36 @@ export default function Sidebar() {
             to={item.path}
             className={({ isActive }) =>
               `
-              rounded-lg px-4 py-2.5 text-sm font-medium transition-colors
-              ${
-                isActive
-                  ? "bg-slate-800 text-white"
-                  : "text-slate-300 hover:bg-slate-800 hover:text-white"
-              }
-              `
+                rounded-lg px-4 py-2.5 text-sm font-medium transition-colors
+                ${
+                  isActive
+                    ? "bg-slate-800 text-white"
+                    : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                }
+                `
             }
           >
             {item.label}
           </NavLink>
         ))}
       </nav>
+
+      <div className="border-t border-slate-800 p-3">
+        <button
+          onClick={onLogout}
+          className="
+            w-full rounded-lg px-4 py-2.5
+            text-left text-sm font-medium
+            text-slate-300
+            transition-colors
+            hover:bg-slate-800
+            hover:text-white
+            cursor-pointer
+          "
+        >
+          Logout
+        </button>
+      </div>
     </aside>
   );
 }
