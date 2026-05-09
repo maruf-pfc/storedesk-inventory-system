@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using StoreDesk.API.Common;
 using StoreDesk.API.DTOs;
 using StoreDesk.API.Interfaces;
-
 namespace StoreDesk.API.Controllers;
 
 [ApiController]
@@ -16,48 +16,68 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<CategoryResponseDto>>> GetCategories()
+    public async Task<ActionResult> GetCategories()
     {
         var categories = await _categoryService.GetAllAsync();
 
-        return Ok(categories);
+        return Ok(ApiResponse<IEnumerable<CategoryResponseDto>>
+            .SuccessResponse(
+                categories,
+                "Categories fetched successfully"
+            ));
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<CategoryResponseDto>> GetCategoryById(int id)
+    public async Task<ActionResult> GetCategoryById(int id)
     {
         var category = await _categoryService.GetByIdAsync(id);
 
         if (category is null)
         {
-            return NotFound();
+            return NotFound(ApiResponse<string>
+                    .FailureResponse(
+                        "Category not found"
+                    ));
         }
 
-        return Ok(category);
+        return Ok(ApiResponse<CategoryResponseDto>
+                .SuccessResponse(
+                    category,
+                    "Category fetched successfully"
+                ));
     }
 
     [HttpPost]
-    public async Task<ActionResult<CategoryResponseDto>> CreateCategory(CreateCategoryDto dto)
+    public async Task<ActionResult> CreateCategory(CreateCategoryDto dto)
     {
         var category = await _categoryService.CreateAsync(dto);
 
-        return CreatedAtAction(
-            nameof(GetCategoryById),
+        return CreatedAtAction(nameof(GetCategoryById),
+
             new { id = category.Id },
-            category);
+
+            ApiResponse<CategoryResponseDto>
+                .SuccessResponse(
+                    category,
+                    "Category created successfully"
+                ));
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<CategoryResponseDto>> UpdateCategory(int id, UpdateCategoryDto dto)
+    public async Task<ActionResult> UpdateCategory(int id, UpdateCategoryDto dto)
     {
         var category = await _categoryService.UpdateAsync(id, dto);
 
         if (category is null)
         {
-            return NotFound();
+            return NotFound(ApiResponse<string>.FailureResponse("Category not found"));
         }
 
-        return Ok(category);
+        return Ok(ApiResponse<CategoryResponseDto>
+                .SuccessResponse(
+                    category,
+                    "Category updated successfully"
+                ));
     }
 
     [HttpDelete("{id}")]
@@ -67,9 +87,16 @@ public class CategoriesController : ControllerBase
 
         if (!deleted)
         {
-            return NotFound();
+            return NotFound(ApiResponse<string>
+                    .FailureResponse(
+                        "Category not found"
+                    ));
         }
 
-        return NoContent();
+        return Ok(ApiResponse<string>
+                .SuccessResponse(
+                    null,
+                    "Category deleted successfully"
+                ));
     }
 }
