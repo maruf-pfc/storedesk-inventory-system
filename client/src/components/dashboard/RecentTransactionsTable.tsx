@@ -1,68 +1,54 @@
-import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
+import Button from "../ui/Button";
 import DataTable from "../ui/DataTable";
 import EmptyState from "../ui/EmptyState";
-import Skeleton from "../ui/Skeleton";
-import StatusBadge from "../ui/StatusBadge";
-import { getRecentTransactions } from "../../services/dashboardService";
-import type { RecentTransaction } from "../../types/dashboard";
+import TransactionStatusBadge from "../transactions/TransactionStatusBadge";
+import type { Transaction } from "../../types/transaction";
 
-export default function RecentTransactionsTable() {
-  const { data, isLoading, isError } = useQuery<RecentTransaction[]>({
-    queryKey: ["recent-transactions"],
+interface RecentTransactionsTableProps {
+  transactions: Transaction[];
+}
 
-    queryFn: getRecentTransactions,
-  });
-
-  if (isLoading) {
-    return (
-      <div className="space-y-3">
-        {Array.from({ length: 5 }).map((_, index) => (
-          <Skeleton key={index} className="h-12 w-full" />
-        ))}
-      </div>
-    );
-  }
-
-  if (isError || !data) {
+export default function RecentTransactionsTable({
+  transactions,
+}: RecentTransactionsTableProps) {
+  if (transactions.length === 0) {
     return (
       <EmptyState
-        title="Failed to load transactions"
-        description="Unable to fetch recent activity."
-      />
-    );
-  }
-
-  if (data.length === 0) {
-    return (
-      <EmptyState
-        title="No transactions found"
-        description="No inventory activity yet."
+        title="No recent transactions"
+        description="Issue inventory items to see activity."
       />
     );
   }
 
   return (
-    <DataTable headers={["Item", "Borrower", "Quantity", "Status"]}>
-      {data.map((transaction) => (
+    <DataTable headers={["Borrower", "Item", "Issued", "Status", "Actions"]}>
+      {transactions.map((transaction) => (
         <tr key={transaction.id} className="hover:bg-slate-50">
-          <td className="px-6 py-4 text-sm font-medium text-slate-900">
+          <td className="px-6 py-4">
+            <p className="text-sm font-medium text-slate-900">
+              {transaction.borrowerName}
+            </p>
+          </td>
+
+          <td className="px-6 py-4 text-sm text-slate-600">
             {transaction.itemName}
           </td>
 
           <td className="px-6 py-4 text-sm text-slate-600">
-            {transaction.borrowerName}
-          </td>
-
-          <td className="px-6 py-4 text-sm text-slate-600">
-            {transaction.quantity}
+            {new Date(transaction.issuedAt).toLocaleDateString()}
           </td>
 
           <td className="px-6 py-4">
-            <StatusBadge
-              status={transaction.isReturned ? "success" : "warning"}
-            >
-              {transaction.isReturned ? "Returned" : "Borrowed"}
-            </StatusBadge>
+            <TransactionStatusBadge isReturned={transaction.isReturned} />
+          </td>
+
+          <td className="px-6 py-4">
+            <Link to="/transactions">
+              <Button size="sm" variant="secondary">
+                View
+              </Button>
+            </Link>
           </td>
         </tr>
       ))}
