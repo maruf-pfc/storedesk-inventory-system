@@ -13,6 +13,7 @@ import {
   updateCategory,
 } from "../services/categoryService";
 import type { Category, CreateCategoryPayload } from "../types/category";
+import { toast } from "sonner";
 
 export default function CategoriesPage() {
   const queryClient = useQueryClient();
@@ -25,7 +26,6 @@ export default function CategoriesPage() {
 
   const { data: categories = [], isLoading } = useQuery({
     queryKey: ["categories"],
-
     queryFn: getCategories,
   });
 
@@ -60,6 +60,8 @@ export default function CategoriesPage() {
         ...old,
       ]);
 
+      setModalOpen(false);
+
       return {
         previousCategories,
       };
@@ -67,16 +69,18 @@ export default function CategoriesPage() {
 
     onError: (_error, _payload, context) => {
       queryClient.setQueryData(["categories"], context?.previousCategories);
+
+      toast.error("Failed to create category");
+    },
+
+    onSuccess: () => {
+      toast.success("Category created successfully");
     },
 
     onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ["categories"],
       });
-    },
-
-    onSuccess: () => {
-      setModalOpen(false);
     },
   });
 
@@ -110,6 +114,8 @@ export default function CategoriesPage() {
         ),
       );
 
+      setModalOpen(false);
+
       return {
         previousCategories,
       };
@@ -117,18 +123,20 @@ export default function CategoriesPage() {
 
     onError: (_error, _variables, context) => {
       queryClient.setQueryData(["categories"], context?.previousCategories);
+
+      toast.error("Failed to update category");
+    },
+
+    onSuccess: () => {
+      toast.success("Category updated successfully");
+
+      setSelectedCategory(null);
     },
 
     onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ["categories"],
       });
-    },
-
-    onSuccess: () => {
-      setModalOpen(false);
-
-      setSelectedCategory(null);
     },
   });
 
@@ -148,6 +156,8 @@ export default function CategoriesPage() {
         old.filter((category) => category.id !== id),
       );
 
+      setDeleteOpen(false);
+
       return {
         previousCategories,
       };
@@ -155,18 +165,20 @@ export default function CategoriesPage() {
 
     onError: (_error, _id, context) => {
       queryClient.setQueryData(["categories"], context?.previousCategories);
+
+      toast.error("Failed to delete category");
+    },
+
+    onSuccess: () => {
+      toast.success("Category deleted successfully");
+
+      setSelectedCategory(null);
     },
 
     onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ["categories"],
       });
-    },
-
-    onSuccess: () => {
-      setDeleteOpen(false);
-
-      setSelectedCategory(null);
     },
   });
 

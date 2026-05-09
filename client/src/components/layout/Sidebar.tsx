@@ -65,6 +65,7 @@ export default function Sidebar({ onLogout }: SidebarProps) {
             transition-colors
             hover:bg-slate-800
             hover:text-white
+            cursor-pointer
           "
         >
           Logout
