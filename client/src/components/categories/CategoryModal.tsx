@@ -1,15 +1,21 @@
-import { useState } from "react";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
 import Label from "../ui/Label";
 import Modal from "../ui/Modal";
 import Textarea from "../ui/Textarea";
-import type { Category, CreateCategoryPayload } from "../../types/category";
+import {
+  categorySchema,
+  type CategoryFormValues,
+} from "../../schemas/categorySchema";
+import type { Category } from "../../types/category";
 
 interface CategoryModalProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (payload: CreateCategoryPayload) => void;
+  onSubmit: (payload: CategoryFormValues) => void;
   loading?: boolean;
   category?: Category | null;
 }
@@ -21,24 +27,38 @@ export default function CategoryModal({
   loading = false,
   category,
 }: CategoryModalProps) {
-  const [name, setName] = useState(category?.name || "");
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<CategoryFormValues>({
+    resolver: zodResolver(categorySchema),
 
-  const [description, setDescription] = useState(category?.description || "");
+    defaultValues: {
+      name: "",
+      description: "",
+    },
+  });
 
-  function handleSubmit(event: React.FormEvent) {
-    event.preventDefault();
+  useEffect(() => {
+    if (category) {
+      reset({
+        name: category.name,
+        description: category.description || "",
+      });
 
-    onSubmit({
-      name,
-      description,
+      return;
+    }
+
+    reset({
+      name: "",
+      description: "",
     });
-  }
+  }, [category, reset, open]);
 
   function handleClose() {
-    setName("");
-
-    setDescription("");
-
+    reset();
     onClose();
   }
 
@@ -48,25 +68,30 @@ export default function CategoryModal({
       onClose={handleClose}
       title={category ? "Edit Category" : "Create Category"}
     >
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div>
           <Label>Name</Label>
 
-          <Input
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            placeholder="Enter category name"
-          />
+          <Input placeholder="Enter category name" {...register("name")} />
+
+          {errors.name && (
+            <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
+          )}
         </div>
 
         <div>
           <Label>Description</Label>
 
           <Textarea
-            value={description}
-            onChange={(event) => setDescription(event.target.value)}
             placeholder="Optional description"
+            {...register("description")}
           />
+
+          {errors.description && (
+            <p className="mt-1 text-sm text-red-600">
+              {errors.description.message}
+            </p>
+          )}
         </div>
 
         <div className="flex justify-end gap-3">
