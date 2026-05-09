@@ -14,7 +14,8 @@ public class TransactionsController : ControllerBase
 {
     private readonly ITransactionService _transactionService;
 
-    public TransactionsController(ITransactionService transactionService)
+    public TransactionsController(
+        ITransactionService transactionService)
     {
         _transactionService = transactionService;
     }
@@ -22,9 +23,11 @@ public class TransactionsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult> GetTransactions()
     {
-        var transactions = await _transactionService.GetAllAsync();
+        var transactions =
+            await _transactionService.GetAllAsync();
 
-        return Ok(ApiResponse<IEnumerable<TransactionResponseDto>>
+        return Ok(
+            ApiResponse<IEnumerable<TransactionResponseDto>>
                 .SuccessResponse(
                     transactions,
                     "Transactions fetched successfully"
@@ -33,11 +36,14 @@ public class TransactionsController : ControllerBase
 
     [Authorize(Roles = Roles.Admin)]
     [HttpPost("issue")]
-    public async Task<ActionResult> IssueItem(CreateTransactionDto dto)
+    public async Task<ActionResult> IssueItem(
+        CreateTransactionDto dto)
     {
-        var transaction = await _transactionService.IssueItemAsync(dto);
+        var transaction =
+            await _transactionService.IssueItemAsync(dto);
 
-        return Ok(ApiResponse<TransactionResponseDto>
+        return Ok(
+            ApiResponse<TransactionResponseDto>
                 .SuccessResponse(
                     transaction,
                     "Item issued successfully"
@@ -45,17 +51,24 @@ public class TransactionsController : ControllerBase
     }
 
     [Authorize(Roles = Roles.Admin)]
-    [HttpPost("{id}/return")]
-    public async Task<ActionResult> ReturnItem(int id)
+    [HttpPatch("{id}/return")]
+    public async Task<ActionResult> ReturnItem(
+        int id)
     {
-        var transaction = await _transactionService.ReturnItemAsync(id);
+        var transaction =
+            await _transactionService.ReturnItemAsync(id);
 
         if (transaction is null)
         {
-            return NotFound(ApiResponse<string>.FailureResponse("Transaction not found"));
+            return NotFound(
+                ApiResponse<string>
+                    .FailureResponse(
+                        "Transaction not found"
+                    ));
         }
 
-        return Ok(ApiResponse<TransactionResponseDto>
+        return Ok(
+            ApiResponse<TransactionResponseDto>
                 .SuccessResponse(
                     transaction,
                     "Item returned successfully"

@@ -108,8 +108,11 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
 
     await RoleSeeder.SeedRolesAsync(services);
-
     await AdminSeeder.SeedAdminAsync(services, builder.Configuration);
+    await DemoUserSeeder.SeedAsync(services);
+    await CategorySeeder.SeedAsync(services);
+    await ItemSeeder.SeedAsync(services);
+    await TransactionSeeder.SeedAsync(services);
 }
 
 app.Run();

@@ -50,7 +50,7 @@ export default function TransactionsTable({
           </td>
 
           <td className="px-6 py-4 text-sm text-slate-600">
-            {new Date(transaction.borrowedAt).toLocaleDateString()}
+            {new Date(transaction.issuedAt).toLocaleDateString()}
           </td>
 
           <td className="px-6 py-4">

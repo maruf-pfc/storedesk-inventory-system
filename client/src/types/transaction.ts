@@ -5,7 +5,7 @@ export interface Transaction {
   itemId: number;
   itemName?: string;
   quantity: number;
-  borrowedAt: string;
+  issuedAt: string;
   returnedAt?: string;
   isReturned: boolean;
 }
