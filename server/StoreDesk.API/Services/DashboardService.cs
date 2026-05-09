@@ -31,4 +31,39 @@ public class DashboardService : IDashboardService
             ReturnedTransactions = returnedTransactions
         };
     }
+
+    public async Task<IEnumerable<LowStockItemDto>> GetLowStockItemsAsync()
+    {
+        return await _context.Items
+            .Include(item => item.Category)
+            .Where(item => item.Quantity < 5)
+            .OrderBy(item => item.Quantity)
+            .Take(5)
+            .Select(item => new LowStockItemDto
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    Quantity = item.Quantity,
+                    CategoryName = item.Category!.Name
+                })
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<RecentTransactionDto>>GetRecentTransactionsAsync()
+    {
+        return await _context.Transactions
+            .Include(transaction => transaction.Item)
+            .OrderByDescending(transaction => transaction.IssuedAt)
+            .Take(5)
+            .Select(transaction => new RecentTransactionDto
+                {
+                    Id = transaction.Id,
+                    ItemName = transaction.Item!.Name,
+                    BorrowerName = transaction.BorrowerName,
+                    Quantity = transaction.Quantity,
+                    IsReturned = transaction.IsReturned,
+                    IssuedAt = transaction.IssuedAt
+                })
+            .ToListAsync();
+    }
 }

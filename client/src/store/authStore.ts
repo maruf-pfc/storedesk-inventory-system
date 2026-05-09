@@ -1,10 +1,10 @@
 import { create } from "zustand";
-
 import type { AuthUser } from "../types/auth";
 
 interface AuthState {
   user: AuthUser | null;
   isAuthenticated: boolean;
+  isInitialized: boolean;
   login: (user: AuthUser) => void;
   logout: () => void;
   initializeAuth: () => void;
@@ -13,7 +13,7 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   isAuthenticated: false,
-
+  isInitialized: false,
   login: (user) => {
     localStorage.setItem("storedesk_user", JSON.stringify(user));
 
@@ -35,15 +35,20 @@ export const useAuthStore = create<AuthState>((set) => ({
   initializeAuth: () => {
     const storedUser = localStorage.getItem("storedesk_user");
 
-    if (!storedUser) {
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+
+      set({
+        user,
+        isAuthenticated: true,
+        isInitialized: true,
+      });
+
       return;
     }
 
-    const user = JSON.parse(storedUser);
-
     set({
-      user,
-      isAuthenticated: true,
+      isInitialized: true,
     });
   },
 }));
