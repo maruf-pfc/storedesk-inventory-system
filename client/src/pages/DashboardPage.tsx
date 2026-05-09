@@ -2,8 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import EmptyState from "../components/ui/EmptyState";
 import Skeleton from "../components/ui/Skeleton";
 import StatCard from "../components/ui/StatCard";
-
 import { getDashboardStats } from "../services/dashboardService";
+import LowStockTable from "../components/dashboard/LowStockTable";
+import RecentTransactionsTable from "../components/dashboard/RecentTransactionsTable";
 
 export default function DashboardPage() {
   const {
@@ -32,9 +33,7 @@ export default function DashboardPage() {
               className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
             >
               <Skeleton className="h-4 w-24" />
-
               <Skeleton className="mt-4 h-10 w-20" />
-
               <Skeleton className="mt-3 h-4 w-32" />
             </div>
           ))}
@@ -109,9 +108,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="rounded-lg border border-dashed border-slate-300 py-10 text-center">
-            <p className="text-sm text-slate-500">
-              Low stock table coming next
-            </p>
+            <LowStockTable />
           </div>
         </div>
 
@@ -127,9 +124,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="rounded-lg border border-dashed border-slate-300 py-10 text-center">
-            <p className="text-sm text-slate-500">
-              Transaction table coming next
-            </p>
+            <RecentTransactionsTable />
           </div>
         </div>
       </div>
