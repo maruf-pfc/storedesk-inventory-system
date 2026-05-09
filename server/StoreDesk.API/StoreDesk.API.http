@@ -76,21 +76,32 @@ Content-Type: application/json
   "categoryId": 3
 }
 
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4MDcxN2YxOS1kYWIzLTQ3YjktYjllYS1jNmU3ZGM3MTllM2UiLCJlbWFpbCI6Im1hcnVmc2Fya2VyLndvcmtAZ21haWwuY29tIiwibmFtZSI6Ik1hcnVmIiwiZXhwIjoxNzc4MzYwNzU4LCJpc3MiOiJTdG9yZURlc2tBUEkiLCJhdWQiOiJTdG9yZURlc2tDbGllbnQifQ.djJkQIxVL2ULGpmcGqvuAaGhJtOD3ghLltYknYlsSPk
+
+###
+GET {{StoreDesk.API_HostAddress}}/api/items
+Accept: application/json
+Authorization: Bearer {{token}}
+
 ###
 GET {{StoreDesk.API_HostAddress}}/api/items?page=1&pageSize=5
 Accept: application/json
+Authorization: Bearer {{token}}
 
 ###
 GET {{StoreDesk.API_HostAddress}}/api/items?page=2&pageSize=5
 Accept: application/json
+Authorization: Bearer {{token}}
 
 ###
 GET {{StoreDesk.API_HostAddress}}/api/items?sortBy=price&sortOrder=desc
 Accept: application/json
+Authorization: Bearer {{token}}
 
 ###
 GET {{StoreDesk.API_HostAddress}}/api/items?sortBy=quantity
 Accept: application/json
+Authorization: Bearer {{token}}
 
 ###
 POST {{StoreDesk.API_HostAddress}}/api/auth/register
