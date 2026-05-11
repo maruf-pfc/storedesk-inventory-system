@@ -16,10 +16,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("ClientPolicy", policy =>
+    options.AddPolicy(
+        "AllowFrontend",
+        policy =>
         {
             policy
-                .WithOrigins("http://localhost:5173")
+                .WithOrigins(
+                    "http://localhost:5173",
+                    "https://storedesk-inventory-system.vercel.app"
+                )
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });
@@ -96,7 +101,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors("ClientPolicy");
+app.UseCors("AllowFrontend");
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
